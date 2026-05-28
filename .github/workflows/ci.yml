@@ -1,0 +1,55 @@
+name: Full Stack CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+
+  backend-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./dotnet-api
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore Packages
+      run: dotnet restore
+
+    - name: Build API
+      run: dotnet build --configuration Release
+
+    - name: Run Tests
+      run: dotnet test
+
+  frontend-build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./angular-client
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install Packages
+      run: npm install
+
+    - name: Build Angular App
+      run: npm run build -- --configuration production
